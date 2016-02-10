@@ -48,9 +48,6 @@ ui-build:
       SAUCE_USER: "{{test.parameters.username}}"
       API_KEY: "{{test.parameters.key}}"
       CF_APP_NAME: "{{deploy.parameters.ui-app-name}}"
-      DEV_SPACE_NAME: "{{deploy.parameters.dev-space}}"
-      DEV_ORG_NAME: "{{deploy.parameters.dev-organization}}"
-      DEV_REGION_ID: "{{deploy.parameters.dev-region}}"
       QA_SPACE_NAME: "{{deploy.parameters.qa-space}}"
       QA_ORG_NAME: "{{deploy.parameters.qa-organization}}"
       QA_REGION_ID: "{{deploy.parameters.qa-region}}"
@@ -69,9 +66,6 @@ catalog-api-build:
       SAUCE_USER: "{{test.parameters.username}}"
       API_KEY: "{{test.parameters.key}}"
       CF_APP_NAME: "{{deploy.parameters.catalog-app-name}}"
-      DEV_SPACE_NAME: "{{deploy.parameters.dev-space}}"
-      DEV_ORG_NAME: "{{deploy.parameters.dev-organization}}"
-      DEV_REGION_ID: "{{deploy.parameters.dev-region}}"
       QA_SPACE_NAME: "{{deploy.parameters.qa-space}}"
       QA_ORG_NAME: "{{deploy.parameters.qa-organization}}"
       QA_REGION_ID: "{{deploy.parameters.qa-region}}"
@@ -90,9 +84,6 @@ orders-api-build:
       SAUCE_USER: "{{test.parameters.username}}"
       API_KEY: "{{test.parameters.key}}"
       CF_APP_NAME: "{{deploy.parameters.orders-app-name}}"
-      DEV_SPACE_NAME: "{{deploy.parameters.dev-space}}"
-      DEV_ORG_NAME: "{{deploy.parameters.dev-organization}}"
-      DEV_REGION_ID: "{{deploy.parameters.dev-region}}"
       QA_SPACE_NAME: "{{deploy.parameters.qa-space}}"
       QA_ORG_NAME: "{{deploy.parameters.qa-organization}}"
       QA_REGION_ID: "{{deploy.parameters.qa-region}}"
@@ -133,7 +124,6 @@ deploy:
   schema: deploy.json
   service-category: pipeline
   parameters:
-    dev-space: dev
     qa-space: qa
     prod-space: prod
     orders-app-name: "{{orders-api-repo.parameters.repo_name}}"
