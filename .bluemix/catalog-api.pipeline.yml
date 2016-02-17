@@ -28,59 +28,6 @@ stages:
       grunt dev-test-cov --no-color -f
     CHECK_COVERAGE_REGRESSION: 'true'
     TEST_TOOL_SELECT: mocha
-- name: DEV
-  inputs:
-  - type: job
-    stage: BUILD
-    job: Build
-  triggers:
-  - type: stage
-  properties:
-  - name: CF_APP_NAME
-    value: undefined
-    type: text
-  - name: APP_URL
-    value: undefined
-    type: text
-  jobs:
-  - name: Pre Deploy Check
-    type: tester
-    extension_id: ibm.devops.services.pipeline.dra_predeploygate_extn
-    ENABLE_COMPARE_APPS: 'false'
-    DRA_MODE: 'false'
-    APP_DESTINATION_MANIFEST: manifest.yml
-    APP_DESTINATION: Dev
-    APP_NOTDESTINATION: Test
-    COMMAND: '#!/bin/bash'
-  - name: Deploy to Dev
-    type: deployer
-    target:
-      region_id: ${DEV_REGION_ID}
-      organization: ${DEV_ORG_NAME}
-      space: ${DEV_SPACE_NAME}
-      application: ${CF_APP_NAME}
-    script: |
-      #!/bin/bash
-      cf create-service cloudantNoSQLDB Shared myMicroservicesCloudant
-      # Push app
-      export CF_APP_NAME="dev-$CF_APP"
-      cf push "${CF_APP_NAME}"
-      export APP_URL=http://$(cf app $CF_APP_NAME | grep urls: | awk '{print $2}')
-      # View logs
-      #cf logs "${CF_APP_NAME}" --recent
-  - name: Functional Tests
-    type: tester
-    extension_id: ibm.devops.services.pipeline.dra_mocha_fvt
-    MINIMUM_SUCCESS_RATE: '100'
-    TEST_LOG_FILE: tests/fvt/mochafvttest.json
-    ADVISORY_MODE: 'false'
-    CHECK_TEST_REGRESSION: 'true'
-    COMMAND: |-
-      #!/bin/bash
-      export CATALOG_API_TEST_SERVER=$APP_URL
-      npm install
-      grunt dev-fvt --no-color -f
-    TEST_TOOL_SELECT: mocha
 - name: TEST
   inputs:
   - type: job
@@ -103,7 +50,7 @@ stages:
     DRA_MODE: 'false'
     APP_DESTINATION_MANIFEST: manifest.yml
     APP_DESTINATION: Test
-    APP_NOTDESTINATION: Dev
+    APP_NOTDESTINATION: Prod
     COMMAND: '#!/bin/bash'
   - name: Deploy to Test
     type: deployer
@@ -120,7 +67,20 @@ stages:
       cf push "${CF_APP_NAME}"
       # View logs
       #cf logs "${CF_APP_NAME}" --recent
-  - name: Sauce Labs Tests QA
+  - name: Functional Tests
+    type: tester
+    extension_id: ibm.devops.services.pipeline.dra_mocha_fvt
+    MINIMUM_SUCCESS_RATE: '100'
+    TEST_LOG_FILE: tests/fvt/mochafvttest.json
+    ADVISORY_MODE: 'false'
+    CHECK_TEST_REGRESSION: 'true'
+    COMMAND: |-
+      #!/bin/bash
+      export CATALOG_API_TEST_SERVER=$APP_URL
+      npm install
+      grunt dev-fvt --no-color -f
+    TEST_TOOL_SELECT: mocha
+  - name: Sauce Labs Tests
     type: tester
     extension_id: ibm.devops.services.pipeline.saucelabs
     target:
